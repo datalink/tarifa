@@ -101,6 +101,17 @@ function logTime(t0) {
     };
 }
 
+function trigger(localSettings, platform, config, ip, httpPort) {
+    return function () {
+        log.send('sucess', 'www project triggering tarifa');
+        var t0 = (new Date()).getTime(),
+            www = pathHelper.cordova_www(),
+            out = localSettings.project_output;
+
+        return prepare(www, out, localSettings, platform, config);
+    }
+}
+
 function onChange(root, platform, config, currentConf, confEmitter) {
     return function () {
         tarifaFile.parse(root, platform, config).then(function (changedSettings) {
@@ -128,6 +139,7 @@ function wait(localSettings, platform, config, ip, httpPort) {
         var confEmitter = new EventEmitter(),
             closeBuilderWatch = builder.watch(
                 pathHelper.root(),
+                trigger(localSettings, platform, config, ip, httpPort),
                 localSettings,
                 platform,
                 config,
